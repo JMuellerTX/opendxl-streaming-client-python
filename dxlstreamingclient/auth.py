@@ -23,8 +23,12 @@ class PermanentAuthenticationError(PermanentError):
     """
     pass
 
-def token(url,clinetid,clientsecret,path_fragment="/iam/v1.4/token",verify_cert_bundle="",scope="",grant_type="",audience=""):
-    auth = (clinetid, clientsecret)
+def token(url, clientid=None, clientsecret="", path_fragment="/iam/v1.4/token",
+          verify_cert_bundle="", scope="", grant_type="", audience="",
+          **kwargs):
+    if clientid is None and "clinetid" in kwargs:
+        clientid = kwargs.pop("clinetid")
+    auth = (clientid, clientsecret)
     try:
         with warnings.catch_warnings():
             if not verify_cert_bundle:

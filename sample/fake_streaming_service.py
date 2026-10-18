@@ -325,9 +325,12 @@ class ConsumerService(object):
                 self._server = HTTPServer(
                     ('', self.port), consumer_service_handler(self))
                 if self._use_ssl:
-                    self._server.socket = ssl.wrap_socket(
-                        self._server.socket, certfile=self._server_certificate,
-                        keyfile=self._server_key, server_side=True
+                    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+                    ssl_context.load_cert_chain(
+                        certfile=self._server_certificate,
+                        keyfile=self._server_key)
+                    self._server.socket = ssl_context.wrap_socket(
+                        self._server.socket, server_side=True
                     )
                 LOG.info("Started service on http%s://%s:%s",
                          "s" if self._use_ssl else "",
